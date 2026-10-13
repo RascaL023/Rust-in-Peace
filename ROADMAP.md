@@ -57,8 +57,8 @@
 **🎯 Tujuan:** nyaman menulis program Rust biasa dan mengerti ownership dasar.
 
 ### ✅ Checklist konsep
-- [ ] Variabel, mutability (`let` vs `let mut`), shadowing
-- [ ] Tipe dasar, tuple, array, slice, `String` vs `&str`
+- [x] Variabel, mutability (`let` vs `let mut`), shadowing
+- [x] Tipe dasar, tuple, array, slice, `String` vs `&str`
 - [ ] Fungsi, expression vs statement, control flow
 - [ ] **Ownership & move**: kenapa `let b = a;` membuat `a` tidak bisa dipakai
 - [ ] **Borrowing**: `&T` vs `&mut T` dan aturan "banyak pembaca *atau* satu penulis"
