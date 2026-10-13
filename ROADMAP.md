@@ -59,10 +59,10 @@
 ### ✅ Checklist konsep
 - [x] Variabel, mutability (`let` vs `let mut`), shadowing
 - [x] Tipe dasar, tuple, array, slice, `String` vs `&str`
-- [ ] Fungsi, expression vs statement, control flow
-- [ ] **Ownership & move**: kenapa `let b = a;` membuat `a` tidak bisa dipakai
-- [ ] **Borrowing**: `&T` vs `&mut T` dan aturan "banyak pembaca *atau* satu penulis"
-- [ ] `struct`, `impl`, method
+- [x] Fungsi, expression vs statement, control flow
+- [x] **Ownership & move**: kenapa `let b = a;` membuat `a` tidak bisa dipakai
+- [x] **Borrowing**: `&T` vs `&mut T` dan aturan "banyak pembaca *atau* satu penulis"
+- [x] `struct`, `impl`, method
 - [ ] `enum`, pattern matching dengan `match`, `if let`
 - [ ] `Option<T>` dan `Result<T, E>`
 - [ ] Operator `?` dan error handling (`thiserror`, `anyhow`)
