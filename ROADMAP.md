@@ -64,7 +64,7 @@
 - [x] **Borrowing**: `&T` vs `&mut T` dan aturan "banyak pembaca *atau* satu penulis"
 - [x] `struct`, `impl`, method
 - [x] `enum`, pattern matching dengan `match`, `if let`
-- [ ] `Option<T>` dan `Result<T, E>`
+- [x] `Option<T>` dan `Result<T, E>`
 - [ ] Operator `?` dan error handling (`thiserror`, `anyhow`)
 - [ ] `Vec`, `HashMap`, `HashSet`
 - [ ] Iterator & closure (`map`, `filter`, `collect`)
