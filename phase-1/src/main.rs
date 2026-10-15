@@ -1,47 +1,37 @@
-mod user;
-
 use std::io::{self, Write};
 
-use crate::user::User;
-
-fn main() {
-    let name = {
-        let mut input = String::new();
-        print_label_for_input("Name: ");
-        io::stdin().read_line(&mut input).unwrap();
-        input.trim().to_string()
-    };
-
-    let username = {
-        let mut input = String::new();
-        print_label_for_input("Username: ");
-        io::stdin().read_line(&mut input).unwrap();
-        input.trim().to_string()
-    };
-
-    let password = {
-        let mut input = String::new();
-        print_label_for_input("Password: ");
-        io::stdin().read_line(&mut input).unwrap();
-        input.trim().to_string()
-    };
-
-    let user = User::new(
-        name,
-        username,
-        password,
-    );
-
-    if user.is_empty() {
-        println!("User field must be filled");
-        return;
-    }
-
-    println!("Name: {}", user.name);
-    println!("Username: {}", user.username);
+#[derive(Debug)]
+enum AppStatus {
+    Starting,
+    Running,
+    Stopped,
 }
 
-fn print_label_for_input(label: &str) {
-    print!("{label}");
-    io::stdout().flush().unwrap();
+fn print_status(status: AppStatus) {
+    match status {
+        AppStatus::Starting => println!("Aplikasi sedang starting"),
+        AppStatus::Running => println!("Aplikasi sedang berjalan"),
+        AppStatus::Stopped => println!("Aplikasi berhenti"),
+    }
+}
+
+fn menu() -> AppStatus {
+    println!("Select Menu: ");
+    println!("1. {:?}", AppStatus::Starting);
+    println!("2. {:?}", AppStatus::Running);
+    println!("3. {:?}", AppStatus::Stopped);
+    print!("Input: "); io::stdout().flush().unwrap();
+
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    let input: u8 = input.trim().parse().unwrap();
+
+    if input == 1 { AppStatus::Starting }
+    else if input == 2 { AppStatus::Running }
+    else { AppStatus::Stopped }
+}
+
+fn main() {
+    let status = menu();
+    print_status(status);
 }

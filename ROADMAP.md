@@ -63,7 +63,7 @@
 - [x] **Ownership & move**: kenapa `let b = a;` membuat `a` tidak bisa dipakai
 - [x] **Borrowing**: `&T` vs `&mut T` dan aturan "banyak pembaca *atau* satu penulis"
 - [x] `struct`, `impl`, method
-- [ ] `enum`, pattern matching dengan `match`, `if let`
+- [x] `enum`, pattern matching dengan `match`, `if let`
 - [ ] `Option<T>` dan `Result<T, E>`
 - [ ] Operator `?` dan error handling (`thiserror`, `anyhow`)
 - [ ] `Vec`, `HashMap`, `HashSet`
