@@ -11,11 +11,12 @@ fn main() {
         [1, 1, 1, 1, 1, 1, 1, 1],
     ];
     // Row, Column
-    let mut player_position_idx: (u8, u8) = (1, 1);
-    let mut step_count = 0;
+    let mut player_position_idx: (usize, usize) = (1, 1);
+    let mut step_count: u8 = 0;
     let mut input = String::new();
 
     loop {
+        println!("Step count: {step_count}");
         simple_clear_screen();
         print_map(&map, &player_position_idx);
         input.clear();
@@ -52,7 +53,7 @@ fn simple_clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
 }
 
-fn validate_movement((player_row, player_col): &(u8, u8), (next_move_row, next_move_col): &(i8, i8), map: &[[u8; 8]; 6]) -> bool {
+fn validate_movement((player_row, player_col): &(usize, usize), (next_move_row, next_move_col): &(i8, i8), map: &[[u8; 8]; 6]) -> bool {
     let index_row: i8 = *player_row as i8 + next_move_row;
     let index_col: i8 = *player_col as i8 + next_move_col;
     if index_row < 0 || index_col < 0 {
@@ -89,11 +90,11 @@ fn resolve_movement(input: &str) -> (i8, i8) {
     (row_move, column_move)
 }
 
-fn print_map(map: &[[u8; 8]; 6], (player_row, player_column): &(u8, u8)) {
+fn print_map(map: &[[u8; 8]; 6], (player_row, player_column): &(usize, usize)) {
     for i in 0..map.len() {
         for j in 0..map[i].len() {
             print!(" ");
-            if i as u8 == *player_row && j as u8 == *player_column {
+            if i == *player_row && j == *player_column {
                 print!("@");
             } else if map[i][j] == 0 {
                 print!(".");
