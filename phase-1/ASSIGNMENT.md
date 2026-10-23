@@ -85,7 +85,7 @@ Kode: `0` lantai, `1` dinding, `2` pintu keluar. Pemain mulai di **baris 1, kolo
 
 ### Aturan permainan
 1. Tiap putaran: gambar peta, tampilkan `Langkah: N`, minta satu perintah.
-2. Perintah (setelah `trim`): `n` = baris−1, `s` = baris+1, `e` = kolom+1, `w` = kolom−1, `q` = keluar.
+2. Perintah (setelah `trim`): `k` = baris−1, `j` = baris+1, `l` = kolom+1, `h` = kolom−1, `q` = keluar.
 3. Gambar: `#` dinding, `.` lantai, `E` pintu keluar, `@` pemain.
 4. Gerak ke dinding → pesan `Tabrak dinding!`. Posisi dan langkah tidak berubah.
 5. Gerak keluar peta → pesan `Di luar peta.` Posisi dan langkah tidak berubah.
@@ -118,13 +118,16 @@ Tabrak dinding!
 ### ✅ Kriteria selesai
 - [x] Jalur tercepat ke pintu keluar menghasilkan tepat **8 langkah**
 - [x] `n` di awal menghasilkan `Tabrak dinding!` dan langkah tetap 0
-- [ ] Baris kosong, `N` huruf besar, dan `east` tidak membuat program panic
-- [ ] Mengubah satu nilai tepi peta jadi `0` dan berjalan keluar menghasilkan `Di luar peta.` (tidak panic)
-- [ ] `cargo clippy` bersih
+- [x] Baris kosong, `N` huruf besar, dan `east` tidak membuat program panic
+- [x] Mengubah satu nilai tepi peta jadi `0` dan berjalan keluar menghasilkan `Di luar peta.` (tidak panic)
+- [?] `cargo clippy` bersih
+Note: `cargo clippy` 4 warning pada iterasi cetak map(gak boleh pakai .iter :v)
 
 ### 🧠 Uji diri (jawab dengan kata sendiri)
 - Kenapa fungsi menggambar peta cukup menerima `&`?
+=> Karena peta tidak layak diubah sembarangan untuk tahap ini.
 - Apa yang terjadi pada `usize` kalau dikurangi dari 0, dan bagaimana kamu mencegahnya?
+=> Panic keknya :v, cegah dengan validasi
 
 ---
 
