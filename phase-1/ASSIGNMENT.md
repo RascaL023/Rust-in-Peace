@@ -116,8 +116,8 @@ Tabrak dinding!
 ```
 
 ### ✅ Kriteria selesai
-- [ ] Jalur tercepat ke pintu keluar menghasilkan tepat **8 langkah**
-- [ ] `n` di awal menghasilkan `Tabrak dinding!` dan langkah tetap 0
+- [x] Jalur tercepat ke pintu keluar menghasilkan tepat **8 langkah**
+- [x] `n` di awal menghasilkan `Tabrak dinding!` dan langkah tetap 0
 - [ ] Baris kosong, `N` huruf besar, dan `east` tidak membuat program panic
 - [ ] Mengubah satu nilai tepi peta jadi `0` dan berjalan keluar menghasilkan `Di luar peta.` (tidak panic)
 - [ ] `cargo clippy` bersih

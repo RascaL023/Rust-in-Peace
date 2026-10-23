@@ -3,45 +3,51 @@ use std::{io::{self, Write}, process::exit};
 fn main() {
     // 0 = Path | 1 = Wall | 2 = Exit
     let map: [[u8; 8]; 6] = [
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 0, 1],
+        [0, 0, 0, 0, 1, 0, 0, 0],
         [1, 1, 1, 0, 1, 0, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 1, 1, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1],
     ];
     // Row, Column
-    let mut player_position_idx: (usize, usize) = (1, 1);
+    let mut player_position_idx: (usize, usize) = (5, 1);
     let mut step_count: u8 = 0;
     let mut input = String::new();
 
     loop {
-        println!("Step count: {step_count}");
         simple_clear_screen();
         print_map(&map, &player_position_idx);
+        println!("Step count: {step_count}");
         input.clear();
 
         print!("Input: ");
         io::stdout().flush().unwrap();
         io::stdin().read_line(&mut input).unwrap();
 
-        let movement: (i8, i8) = resolve_movement(input.trim());
-        if movement == (0, 0) {
-            continue;
-        }
+        let (movement_row, movement_col) = match resolve_movement_with_execution(input.trim(), &player_position_idx, &map) {
+            Some((r, c)) => {
+                if r + c == 0 {
+                    println!("Nabrak!");
+                    continue;
+                }
 
-        if validate_movement(&player_position_idx, &movement, &map) {
-            player_position_idx = ((movement.0 + player_position_idx.0 as i8).try_into().unwrap(), (movement.1 + player_position_idx.1 as i8).try_into().unwrap());
-        } else {
-            println!("Invalid");
-            continue;
-        }
+                if map[r][c] == 2 {
+                    println!("Congrats");
+                    player_position_idx = (r, c);
+                    step_count += 1;
+                    break;
+                }
+                (r, c)
+            },
+            None => {
+                println!("Keluar dari map");
+                continue;
+            },
+        };
 
+        player_position_idx = (movement_row, movement_col);
         step_count += 1;
-
-        if step_count == 8 {
-            break;
-        }
     }
 
     simple_clear_screen();
@@ -53,19 +59,7 @@ fn simple_clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
 }
 
-fn validate_movement((player_row, player_col): &(usize, usize), (next_move_row, next_move_col): &(i8, i8), map: &[[u8; 8]; 6]) -> bool {
-    let index_row: i8 = *player_row as i8 + next_move_row;
-    let index_col: i8 = *player_col as i8 + next_move_col;
-    if index_row < 0 || index_col < 0 {
-        return false
-    }
-
-    let next_move = map[index_row as usize][index_col as usize];
-
-    !(next_move == 1)
-}
-
-fn resolve_movement(input: &str) -> (i8, i8) {
+fn resolve_movement_with_execution(input: &str, (player_row, player_col): &(usize, usize), map: &[[u8; 8]; 6]) -> Option<(usize, usize)> {
     if input == "q" {
         println!("Sampai jumpa");
         exit(0);
@@ -79,7 +73,7 @@ fn resolve_movement(input: &str) -> (i8, i8) {
         0
     };
 
-    let column_move: i8 = if input == "l" {
+    let col_move: i8 = if input == "l" {
         1
     } else if input == "h" {
         -1
@@ -87,7 +81,16 @@ fn resolve_movement(input: &str) -> (i8, i8) {
         0
     };
 
-    (row_move, column_move)
+    let index_row: i8 = *player_row as i8 + row_move;
+    let index_col: i8 = *player_col as i8 + col_move;
+    if index_row < 0 || index_row > map.len() as i8 - 1 ||
+    index_col < 0 || index_col > map[0].len() as i8 - 1 {
+        return None;
+    } else if map[index_row as usize][index_col as usize] == 1 {
+        return Some((0 , 0));
+    } 
+
+    Some((index_row as usize, index_col as usize))
 }
 
 fn print_map(map: &[[u8; 8]; 6], (player_row, player_column): &(usize, usize)) {
