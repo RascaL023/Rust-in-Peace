@@ -185,15 +185,19 @@ Langkah: 0 | Kunci: tidak
 ```
 
 ### ✅ Kriteria selesai
-- [ ] Jalur tercepat menghasilkan tepat **12 langkah**
-- [ ] Menginjak pintu tanpa kunci → `Pintu terkunci.` dan langkah tidak bertambah
-- [ ] Setelah kunci diambil, kembali ke kotak kunci tidak mengambilnya lagi (kotaknya sudah lantai)
-- [ ] Menambah satu varian dummy ke `Tile` membuat compiler error di semua `match`. Kamu paham kenapa itu bagus. Lalu hapus lagi.
-- [ ] `cargo clippy` bersih
+- [x] Jalur tercepat menghasilkan tepat **12 langkah**
+- [x] Menginjak pintu tanpa kunci → `Pintu terkunci.` dan langkah tidak bertambah
+- [x] Setelah kunci diambil, kembali ke kotak kunci tidak mengambilnya lagi (kotaknya sudah lantai)
+- [x] Menambah satu varian dummy ke `Tile` membuat compiler error di semua `match`. Kamu paham kenapa itu bagus. Lalu hapus lagi.
+- [?] `cargo clippy` bersih
+Note: `cargo clippy` masih sama 4 warning.
 
 ### 🧠 Uji diri
 - Apa keuntungan `parse_command` mengembalikan `Option<Command>` dibanding mengembalikan `Command` dengan varian `Unknown`?
+=> Sebab secara semantik sudah jelas, command dari input bisa valid/tidak. 
+Menambah varian Unknown hanya menambah pekerjaan.
 - Kenapa fungsi yang mengambil kunci butuh `&mut`, sedangkan yang menggambar cukup `&`?
+=> Karena mengambil kunci = update peta, maka perlu izin untuk menulis.
 
 ---
 
