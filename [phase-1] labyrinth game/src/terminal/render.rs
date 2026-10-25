@@ -1,4 +1,4 @@
-use labyrinth::domain::tile::Tile;
+use labyrinth::domain::{game::Game, tile::Tile};
 
 pub fn symbol(tile: Tile) -> char {
     match tile {
@@ -7,39 +7,42 @@ pub fn symbol(tile: Tile) -> char {
         Tile::Exit => 'E',
         Tile::Key => 'K',
         Tile::Door => 'D',
+        Tile::Trap(_) => '^',
+        Tile::Potion(_) => '+',
     }
 }
 
-// ========================== UTILS ==========================
-pub fn print_info(
-    map: &[[u8; 8]; 6],
-    step_count: usize,
-    have_key: bool,
-    player_position_idx: &(usize, usize),
-) {
-    print_map(map, player_position_idx);
-    println!("Total langkah : {step_count}");
-    println!("Kunci         : {}", if have_key { "ya" } else { "tidak" });
+pub fn display_info(game: &Game) {
+    println!(
+        "HP: {}/{} | Langkah: {} | Kunci: {}",
+        game.hp(),
+        game.player.max_hp(),
+        game.steps(),
+        if game.has_key() { "Ya" } else { "Tidak" },
+    );
 }
 
-pub fn simple_clear_screen() {
-    print!("\x1B[2J\x1B[1;1H");
-}
-
-pub fn print_map(map: &[[u8; 8]; 6], (player_row, player_column): &(usize, usize)) {
-    for i in 0..map.len() {
-        for j in 0..map[i].len() {
+pub fn draw_map(game: &Game) {
+    let (player_row, player_col) = game.player_position();
+    for i in 0..game.map.len() {
+        for j in 0..game.map[i].len() {
             print!(" ");
-            if i == *player_row && j == *player_column {
+            if i == player_row && j == player_col {
                 print!("@");
                 continue;
             }
 
-            match Tile::from_code(map[i][j]) {
+            match Tile::from_code(game.map[i][j]) {
                 Some(t) => print!("{}", symbol(t)),
                 None => print!("?"),
             }
         }
         println!();
     }
+}
+
+// ========================== UTILS ==========================
+
+pub fn simple_clear_screen() {
+    print!("\x1B[2J\x1B[1;1H");
 }

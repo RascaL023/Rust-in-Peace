@@ -263,12 +263,12 @@ HP: 5/5 | Langkah: 0 | Kunci: tidak
 ```
 
 ### ✅ Kriteria selesai
-- [ ] Rute tercepat yang selamat: **14 langkah**, HP akhir **2**
-- [ ] Menuju ke kotak jebakan di baris 3 lalu bolak-balik: pemain tewas tanpa panic (uji underflow)
-- [ ] Ramuan tidak bisa dipakai dua kali
-- [ ] Ramuan saat HP penuh tidak membuat HP melebihi 5
-- [ ] `main` tidak mengakses field `Game` secara langsung
-- [ ] `cargo clippy` bersih
+- [x] Rute tercepat yang selamat: **14 langkah**, HP akhir **2**
+- [x] Menuju ke kotak jebakan di baris 3 lalu bolak-balik: pemain tewas tanpa panic (uji underflow)
+- [x] Ramuan tidak bisa dipakai dua kali
+- [x] Ramuan saat HP penuh tidak membuat HP melebihi 5
+- [x] `main` tidak mengakses field `Game` secara langsung
+- [x] `cargo clippy` bersih
 
 ### 🧠 Uji diri
 - Method mana yang butuh `&mut self`, dan kenapa `draw` tidak?

@@ -4,28 +4,28 @@ mod render;
 use std::io::{self, Write};
 
 use labyrinth::domain::command::Command;
-use labyrinth::domain::direction::Direction;
-use labyrinth::domain::tile::Tile;
+use labyrinth::domain::game::Game;
+use labyrinth::domain::outcome::Outcome;
 
-pub fn run(
-    map: &mut [[u8; 8]; 6],
-    mut player_position_idx: (usize, usize),
-    mut step_count: usize,
-    mut have_key: bool,
-) {
+pub fn run(game: &mut Game) {
     let mut input = String::new();
     let mut message: &str = "";
+    let mut hp_change: i8 = -1;
 
     loop {
         input.clear();
         render::simple_clear_screen();
-        render::print_info(map, step_count, have_key, &player_position_idx);
+        render::draw_map(game);
+        render::display_info(game);
 
-        if !message.is_empty() {
+        if hp_change != -1 {
+            println!("{message}{hp_change}.");
+        } else if !message.is_empty() {
             println!("{message}");
         }
 
         message = "";
+        hp_change = -1;
         println!("Perintah (k/j/h/l/q): ");
         print!("> ");
         io::stdout().flush().expect("Gagal flush");
@@ -33,113 +33,67 @@ pub fn run(
             .read_line(&mut input)
             .expect("Tidak  bisa memproses input");
 
-        let input = input.trim();
-        let (movement_row, movement_col) = match input::parse(input) {
+        let (movement_row, movement_col) = match input::parse(input.trim()) {
             Some(Command::Quit) => {
                 println!("Sampai jumpa");
                 break;
             }
-            Some(Command::Go(Direction::North)) => (-1, 0),
-            Some(Command::Go(Direction::South)) => (1, 0),
-            Some(Command::Go(Direction::East)) => (0, 1),
-            Some(Command::Go(Direction::West)) => (0, -1),
+            Some(Command::Go(d)) => {
+                let (r, c) = d.vector_from();
+                let (rp, cp) = game.player_position();
+                println!("{}:{}", rp as i8 + r, cp as i8 + c);
+                (rp as i8 + r, cp as i8 + c)
+            }
             None => {
                 message = "Invalid input";
                 continue;
             }
         };
 
-        let (movement_row, movement_col) =
-            resolve_movement(&(movement_row, movement_col), &player_position_idx);
-        let (movement_row, movement_col): (usize, usize) =
-            match proceed_movement(&(movement_row, movement_col), map) {
-                None => {
-                    message = "Keluar map";
-                    continue;
-                }
-                Some((r, c)) => (r, c),
-            };
-
-        match Tile::from_code(map[movement_row][movement_col]) {
-            Some(Tile::Exit) => {
-                render::simple_clear_screen();
-                update_movement(
-                    &mut player_position_idx,
-                    (movement_row, movement_col),
-                    &mut step_count,
-                );
-                render::print_info(map, step_count, have_key, &player_position_idx);
-
-                println!("Berhasil!");
-                break;
-            }
-            Some(Tile::Floor) => {}
-            Some(Tile::Wall) => {
+        match game.proceed_movement(movement_row, movement_col) {
+            Outcome::Moved => {}
+            Outcome::HitWall => {
                 message = "Menabrak tembok";
-                continue;
             }
-            Some(Tile::Key) => {
-                key_received(map, (movement_row, movement_col));
-                have_key = true;
+            Outcome::OutOfMap => {
+                message = "Keluar map";
+            }
+
+            Outcome::TookKey => {
                 message = "Kunci berhasil diambil";
             }
-            Some(Tile::Door) => {
-                if have_key {
-                    message = "Pintu terbuka";
-                } else {
-                    message = "Pintu terkunci";
-                    continue;
-                }
+            Outcome::OpenedDoor => {
+                message = "Pintu terbuka";
             }
-            None => {
-                message = "Tile tidak dikenali";
-                continue;
+            Outcome::DoorLocked => {
+                message = "Pintu terkunci";
             }
-        };
 
-        update_movement(
-            &mut player_position_idx,
-            (movement_row, movement_col),
-            &mut step_count,
-        );
+            Outcome::Hurt(n) => {
+                message = "Jebakan! HP -";
+                hp_change = n as i8;
+            }
+            Outcome::Healed(n) => {
+                message = "Ramuan! HP +";
+                hp_change = n as i8;
+            }
+
+            Outcome::Won => {
+                render::simple_clear_screen();
+                render::draw_map(game);
+                render::display_info(game);
+
+                println!("Berhasil");
+                break;
+            }
+            Outcome::Died => {
+                render::simple_clear_screen();
+                render::draw_map(game);
+                render::display_info(game);
+
+                println!("Game Over! Kamu gagal :v");
+                break;
+            }
+        }
     }
-}
-
-// Count current position + move position, return index position
-fn resolve_movement(
-    (movement_row, movement_col): &(i8, i8),
-    (player_pos_row, player_pos_col): &(usize, usize),
-) -> (i8, i8) {
-    (
-        *player_pos_row as i8 + *movement_row,
-        *player_pos_col as i8 + *movement_col,
-    )
-}
-
-fn proceed_movement(
-    (movement_row, movement_col): &(i8, i8),
-    map: &[[u8; 8]; 6],
-) -> Option<(usize, usize)> {
-    if is_outside_map(&(*movement_row, *movement_col), map) {
-        return None;
-    }
-
-    Some((*movement_row as usize, *movement_col as usize))
-}
-
-fn key_received(map: &mut [[u8; 8]; 6], (row, col): (usize, usize)) {
-    map[row][col] = 0;
-}
-
-fn update_movement(
-    player_position_idx: &mut (usize, usize),
-    new_move: (usize, usize),
-    step_count: &mut usize,
-) {
-    *player_position_idx = new_move;
-    *step_count += 1;
-}
-
-fn is_outside_map((row, col): &(i8, i8), map: &[[u8; 8]; 6]) -> bool {
-    *row < 0 || *row > map.len() as i8 - 1 || *col < 0 || *col > map[0].len() as i8 - 1
 }
