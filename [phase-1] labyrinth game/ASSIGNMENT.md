@@ -243,6 +243,14 @@ Kode baru: `5` jebakan (damage 2), `6` ramuan (pulih 3). Pemain mulai di **baris
 - Tambahkan varian `Tile::Trap(u8)` dan `Tile::Potion(u8)` dengan data.
 - `match` tanpa `_ =>` tetap berlaku untuk enum buatanmu.
 
+### 🔧 Penyesuaian untuk struktur lib + terminal
+- `Player` dan `Game` ada di `src/domain/` (`player.rs`, `game.rs`). **Tidak boleh ada `println!` atau `stdin` di domain.**
+- Menggambar peta = fungsi di `terminal/render.rs`, bukan `Game::draw`.
+- `Game` menyediakan method pembaca: `tile_at(row, col)`, `player_position()`, `hp()`, `steps()`, `has_key()`.
+- `Game::new()` menggantikan data peta dan keadaan awal yang sekarang di `main.rs`.
+- Method pemroses perintah (`&mut self`) mengembalikan `enum Outcome`; `terminal::run` yang memutuskan lanjut atau berhenti.
+- `terminal` tidak boleh mengakses field `Game` langsung, hanya lewat method.
+
 ### Contoh tampilan
 ```
 ########
