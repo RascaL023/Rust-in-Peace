@@ -1,8 +1,8 @@
 use crate::domain::{outcome::Outcome, player::Player, tile::Tile};
 
 pub struct Game {
-    pub map: [[u8; 8]; 6],
-    pub player: Player,
+    map: [[u8; 8]; 6],
+    player: Player,
 }
 
 impl Default for Game {
@@ -26,24 +26,36 @@ impl Game {
         }
     }
 
-    pub fn player_position(&self) -> (usize, usize) {
-        self.player.position
+    pub fn map_len(&self) -> (usize, usize) {
+        (self.map.len(), self.map[0].len())
     }
 
-    pub fn hp(&self) -> u8 {
+    pub fn player_position(&self) -> (usize, usize) {
+        self.player.position()
+    }
+
+    pub fn player_max_hp(&self) -> u8 {
+        self.player.max_hp()
+    }
+
+    pub fn player_hp(&self) -> u8 {
         self.player.hp()
     }
 
     pub fn steps(&self) -> usize {
-        self.player.total_step
+        self.player.total_step()
     }
 
     pub fn has_key(&self) -> bool {
         self.player.has_key()
     }
 
+    pub fn tile_at(&self, (r, c): (usize, usize)) -> Option<Tile> {
+        Tile::from_code(self.map[r][c])
+    }
+
     pub fn proceed_movement(&mut self, row: i8, col: i8) -> Outcome {
-        if !self.is_outside_map((row, col)) {
+        if self.is_outside_map((row, col)) {
             return Outcome::OutOfMap;
         }
 
@@ -52,14 +64,14 @@ impl Game {
             Some(Tile::Trap(n)) => {
                 self.moved_to(r, c);
                 self.player.damage(n);
-                if self.hp() == 0 {
+                if self.player_hp() == 0 {
                     return Outcome::Died;
                 };
 
                 Outcome::Hurt(n)
             }
             Some(Tile::Potion(n)) => {
-                let current_hp = self.hp();
+                let current_hp = self.player_hp();
 
                 self.moved_to(r, c);
                 self.player.heal(n);
@@ -104,10 +116,9 @@ impl Game {
         }
     }
 
-
     fn moved_to(&mut self, row: usize, col: usize) {
-        self.player.position = (row, col);
-        self.player.total_step += 1;
+        self.player.move_position((row, col));
+        self.player.add_step(1);
     }
 
     fn update_map(&mut self, row: usize, col: usize, tile: Tile) {

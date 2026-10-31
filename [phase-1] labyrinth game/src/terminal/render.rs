@@ -15,8 +15,8 @@ pub fn symbol(tile: Tile) -> char {
 pub fn display_info(game: &Game) {
     println!(
         "HP: {}/{} | Langkah: {} | Kunci: {}",
-        game.hp(),
-        game.player.max_hp(),
+        game.player_hp(),
+        game.player_max_hp(),
         game.steps(),
         if game.has_key() { "Ya" } else { "Tidak" },
     );
@@ -24,15 +24,16 @@ pub fn display_info(game: &Game) {
 
 pub fn draw_map(game: &Game) {
     let (player_row, player_col) = game.player_position();
-    for i in 0..game.map.len() {
-        for j in 0..game.map[i].len() {
+    let (map_row, map_col) = game.map_len();
+    for i in 0..map_row {
+        for j in 0..map_col {
             print!(" ");
             if i == player_row && j == player_col {
                 print!("@");
                 continue;
             }
 
-            match Tile::from_code(game.map[i][j]) {
+            match game.tile_at((i, j)) {
                 Some(t) => print!("{}", symbol(t)),
                 None => print!("?"),
             }

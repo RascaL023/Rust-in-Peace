@@ -1,8 +1,8 @@
 pub struct Player {
     hp: u8,
-    pub position: (usize, usize),
+    position: (usize, usize),
     has_key: bool,
-    pub total_step: usize,
+    total_step: usize,
     max_hp: u8,
 }
 
@@ -35,8 +35,24 @@ impl Player {
         self.has_key
     }
 
+    pub fn total_step(&self) -> usize {
+        self.total_step
+    }
+
+    pub fn position(&self) -> (usize, usize) {
+        self.position
+    }
+
     pub fn pick_up_key(&mut self) {
         self.has_key = true;
+    }
+
+    pub fn move_position(&mut self, (r, c): (usize, usize)) {
+        self.position = (r, c)
+    }
+
+    pub fn add_step(&mut self, n: usize) {
+        self.total_step += n
     }
 
     pub fn damage(&mut self, n: u8) {
