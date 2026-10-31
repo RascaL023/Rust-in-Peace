@@ -125,9 +125,9 @@ Note: `cargo clippy` 4 warning pada iterasi cetak map(gak boleh pakai .iter :v)
 
 ### 🧠 Uji diri (jawab dengan kata sendiri)
 - Kenapa fungsi menggambar peta cukup menerima `&`?
-=> Karena peta tidak layak diubah sembarangan untuk tahap ini.
+    > Karena peta tidak layak diubah sembarangan untuk tahap ini.
 - Apa yang terjadi pada `usize` kalau dikurangi dari 0, dan bagaimana kamu mencegahnya?
-=> Panic keknya :v, cegah dengan validasi
+    > Panic keknya :v, cegah dengan validasi
 
 ---
 
@@ -194,10 +194,10 @@ Note: `cargo clippy` masih sama 4 warning.
 
 ### 🧠 Uji diri
 - Apa keuntungan `parse_command` mengembalikan `Option<Command>` dibanding mengembalikan `Command` dengan varian `Unknown`?
-=> Sebab secara semantik sudah jelas, command dari input bisa valid/tidak. 
-Menambah varian Unknown hanya menambah pekerjaan.
+    > Sebab secara semantik sudah jelas, command dari input bisa valid/tidak. 
+    Menambah varian Unknown hanya menambah pekerjaan.
 - Kenapa fungsi yang mengambil kunci butuh `&mut`, sedangkan yang menggambar cukup `&`?
-=> Karena mengambil kunci = update peta, maka perlu izin untuk menulis.
+    > Karena mengambil kunci = update peta, maka perlu izin untuk menulis.
 
 ---
 
@@ -272,7 +272,10 @@ HP: 5/5 | Langkah: 0 | Kunci: tidak
 
 ### 🧠 Uji diri
 - Method mana yang butuh `&mut self`, dan kenapa `draw` tidak?
+    > Semua method yang butuh update terhadap fieldnya maka perlu 
+    &mut self untuk write. Draw tidak perlu karena hanya membaca.
 - Apa keuntungan `handle` mengembalikan `Outcome` daripada langsung memanggil `break` di dalamnya?
+    > Untuk pemisahan sesuatu yang perlu dilakukan atas terjadinya tidakan/outcome.
 
 ---
 

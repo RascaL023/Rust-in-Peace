@@ -88,8 +88,8 @@ pub fn print_feedback(feedback: &Feedback) {
             Outcome::Won => {
                 println!("Berhasil");
             }
-            Outcome::Died => {
-                println!("Game Over! Kamu gagal :v");
+            Outcome::Died(n) => {
+                println!("Terkena jebakan! HP -{n}\nGame Over! Kamu gagal :v");
             }
         },
     }

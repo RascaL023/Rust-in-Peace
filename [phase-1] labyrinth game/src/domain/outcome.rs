@@ -11,5 +11,5 @@ pub enum Outcome {
     Healed(u8),
 
     Won,
-    Died,
+    Died(u8),
 }

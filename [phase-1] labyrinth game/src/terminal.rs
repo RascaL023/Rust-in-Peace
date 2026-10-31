@@ -18,7 +18,7 @@ pub fn run(game: &mut Game) {
         }
         if matches!(
             feedback,
-            Some(render::Feedback::Game(Outcome::Won | Outcome::Died))
+            Some(render::Feedback::Game(Outcome::Won | Outcome::Died(_)))
         ) {
             break;
         }

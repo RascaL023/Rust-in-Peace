@@ -16,7 +16,7 @@ impl Game {
         Game {
             map: [
                 [1, 1, 1, 1, 1, 1, 1, 1],
-                [0, 0, 0, 0, 1, 3, 6, 1],
+                [1, 0, 0, 0, 1, 3, 6, 1],
                 [1, 1, 1, 5, 1, 5, 1, 1],
                 [1, 0, 5, 0, 0, 0, 4, 2],
                 [1, 0, 1, 1, 1, 1, 1, 1],
@@ -51,6 +51,10 @@ impl Game {
     }
 
     pub fn tile_at(&self, (r, c): (usize, usize)) -> Option<Tile> {
+        if self.is_outside_map((r as i8, c as i8)) {
+            return None;
+        }
+
         Tile::from_code(self.map[r][c])
     }
 
@@ -65,11 +69,12 @@ impl Game {
                 let current_hp = self.player_hp();
                 self.moved_to(r, c);
                 self.player.damage(n);
+                let current_hp = current_hp - self.player_hp();
                 if self.player_hp() == 0 {
-                    return Outcome::Died;
+                    return Outcome::Died(current_hp);
                 };
 
-                Outcome::Hurt(current_hp - self.player_hp())
+                Outcome::Hurt(current_hp)
             }
             Some(Tile::Potion(n)) => {
                 let current_hp = self.player_hp();
