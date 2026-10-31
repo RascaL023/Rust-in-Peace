@@ -62,13 +62,14 @@ impl Game {
         let (r, c): (usize, usize) = (row as usize, col as usize);
         match Tile::from_code(self.map[r][c]) {
             Some(Tile::Trap(n)) => {
+                let current_hp = self.player_hp();
                 self.moved_to(r, c);
                 self.player.damage(n);
                 if self.player_hp() == 0 {
                     return Outcome::Died;
                 };
 
-                Outcome::Hurt(n)
+                Outcome::Hurt(current_hp - self.player_hp())
             }
             Some(Tile::Potion(n)) => {
                 let current_hp = self.player_hp();
@@ -77,11 +78,7 @@ impl Game {
                 self.player.heal(n);
                 self.update_map(r, c, Tile::Floor);
 
-                Outcome::Healed(if current_hp + n > self.player.max_hp() {
-                    self.player.max_hp() - current_hp
-                } else {
-                    n
-                })
+                Outcome::Healed(self.player_hp() - current_hp)
             }
             Some(Tile::Key) => {
                 self.player.pick_up_key();

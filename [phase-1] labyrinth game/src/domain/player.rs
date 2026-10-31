@@ -56,16 +56,10 @@ impl Player {
     }
 
     pub fn damage(&mut self, n: u8) {
-        let result: i8 = self.hp as i8 - n as i8;
-        self.hp = if result <= 0 { 0 } else { result as u8 }
+        self.hp = self.hp.saturating_sub(n)
     }
 
     pub fn heal(&mut self, n: u8) {
-        let result = self.hp + n;
-        self.hp = if result > self.max_hp {
-            self.max_hp
-        } else {
-            result
-        }
+        self.hp = self.hp.saturating_add(n).min(self.max_hp);
     }
 }
