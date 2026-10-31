@@ -43,8 +43,12 @@ impl Game {
     }
 
     pub fn proceed_movement(&mut self, row: i8, col: i8) -> Outcome {
+        if !self.is_outside_map((row, col)) {
+            return Outcome::OutOfMap;
+        }
+
         let (r, c): (usize, usize) = (row as usize, col as usize);
-        match self.tile_at(row, col) {
+        match Tile::from_code(self.map[r][c]) {
             Some(Tile::Trap(n)) => {
                 self.moved_to(r, c);
                 self.player.damage(n);
@@ -79,6 +83,7 @@ impl Game {
                     return Outcome::DoorLocked;
                 }
 
+                // Jika ingin door berubah setelah terbuka
                 // self.update_map(r, c, Tile::Floor);
                 self.moved_to(r, c);
 
@@ -99,19 +104,6 @@ impl Game {
         }
     }
 
-
-    fn tile_at(&self, row: i8, col: i8) -> Option<Tile> {
-        if self.is_outside_map((row, col)) {
-            return None;
-        }
-
-        match Tile::from_code(self.map[row as usize][col as usize]) {
-            Some(Tile::Trap(d)) => Some(Tile::Trap(d)),
-            Some(Tile::Potion(h)) => Some(Tile::Potion(h)),
-            Some(t) => Some(t),
-            None => None,
-        }
-    }
 
     fn moved_to(&mut self, row: usize, col: usize) {
         self.player.position = (row, col);

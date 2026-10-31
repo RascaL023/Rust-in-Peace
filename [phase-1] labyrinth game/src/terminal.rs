@@ -3,9 +3,7 @@ mod render;
 
 use std::io::{self, Write};
 
-use labyrinth::domain::command::Command;
-use labyrinth::domain::game::Game;
-use labyrinth::domain::outcome::Outcome;
+use labyrinth::domain::{command::Command, game::Game, outcome::Outcome};
 
 pub fn run(game: &mut Game) {
     let mut input = String::new();
@@ -14,9 +12,7 @@ pub fn run(game: &mut Game) {
 
     loop {
         input.clear();
-        render::simple_clear_screen();
-        render::draw_map(game);
-        render::display_info(game);
+        draw_frame(game);
 
         if hp_change != -1 {
             println!("{message}{hp_change}.");
@@ -41,7 +37,6 @@ pub fn run(game: &mut Game) {
             Some(Command::Go(d)) => {
                 let (r, c) = d.vector_from();
                 let (rp, cp) = game.player_position();
-                println!("{}:{}", rp as i8 + r, cp as i8 + c);
                 (rp as i8 + r, cp as i8 + c)
             }
             None => {
@@ -79,21 +74,23 @@ pub fn run(game: &mut Game) {
             }
 
             Outcome::Won => {
-                render::simple_clear_screen();
-                render::draw_map(game);
-                render::display_info(game);
+                draw_frame(game);
 
                 println!("Berhasil");
                 break;
             }
             Outcome::Died => {
-                render::simple_clear_screen();
-                render::draw_map(game);
-                render::display_info(game);
+                draw_frame(game);
 
                 println!("Game Over! Kamu gagal :v");
                 break;
             }
         }
     }
+}
+
+fn draw_frame(game: &Game) {
+    render::simple_clear_screen();
+    render::draw_map(game);
+    render::display_info(game);
 }
