@@ -1,4 +1,9 @@
-use labyrinth::domain::{game::Game, tile::Tile};
+use labyrinth::domain::{game::Game, outcome::Outcome, tile::Tile};
+
+pub enum Feedback {
+    Invalid,
+    Game(Outcome),
+}
 
 pub fn symbol(tile: Tile) -> char {
     match tile {
@@ -46,4 +51,46 @@ pub fn draw_map(game: &Game) {
 
 pub fn simple_clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
+}
+
+pub fn draw_frame(game: &Game) {
+    simple_clear_screen();
+    draw_map(game);
+    display_info(game);
+}
+
+pub fn print_feedback(feedback: &Feedback) {
+    match feedback {
+        Feedback::Invalid => println!("Invalid input"),
+        Feedback::Game(outcome) => match outcome {
+            Outcome::Moved => {}
+            Outcome::HitWall => {
+                println!("Menabrak tembok");
+            }
+            Outcome::OutOfMap => {
+                println!("Keluar map");
+            }
+            Outcome::TookKey => {
+                println!("Kunci berhasil diambil");
+            }
+            Outcome::OpenedDoor => {
+                println!("Pintu terbuka");
+            }
+            Outcome::DoorLocked => {
+                println!("Pintu terkunci");
+            }
+            Outcome::Hurt(n) => {
+                println!("Jebakan! HP -{n}");
+            }
+            Outcome::Healed(n) => {
+                println!("Ramuan! HP +{n}");
+            }
+            Outcome::Won => {
+                println!("Berhasil");
+            }
+            Outcome::Died => {
+                println!("Game Over! Kamu gagal :v");
+            }
+        },
+    }
 }

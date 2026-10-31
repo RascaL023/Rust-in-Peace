@@ -7,21 +7,22 @@ use labyrinth::domain::{command::Command, game::Game, outcome::Outcome};
 
 pub fn run(game: &mut Game) {
     let mut input = String::new();
-    let mut message: &str = "";
-    let mut hp_change: i8 = -1;
+    let mut feedback: Option<render::Feedback> = None;
 
     loop {
         input.clear();
-        draw_frame(game);
+        render::draw_frame(game);
 
-        if hp_change != -1 {
-            println!("{message}{hp_change}.");
-        } else if !message.is_empty() {
-            println!("{message}");
+        if let Some(f) = &feedback {
+            render::print_feedback(f);
+        }
+        if matches!(
+            feedback,
+            Some(render::Feedback::Game(Outcome::Won | Outcome::Died))
+        ) {
+            break;
         }
 
-        message = "";
-        hp_change = -1;
         println!("Perintah (k/j/h/l/q): ");
         print!("> ");
         io::stdout().flush().expect("Gagal flush");
@@ -40,57 +41,13 @@ pub fn run(game: &mut Game) {
                 (rp as i8 + r, cp as i8 + c)
             }
             None => {
-                message = "Invalid input";
+                feedback = Some(render::Feedback::Invalid);
                 continue;
             }
         };
 
-        match game.proceed_movement(movement_row, movement_col) {
-            Outcome::Moved => {}
-            Outcome::HitWall => {
-                message = "Menabrak tembok";
-            }
-            Outcome::OutOfMap => {
-                message = "Keluar map";
-            }
-
-            Outcome::TookKey => {
-                message = "Kunci berhasil diambil";
-            }
-            Outcome::OpenedDoor => {
-                message = "Pintu terbuka";
-            }
-            Outcome::DoorLocked => {
-                message = "Pintu terkunci";
-            }
-
-            Outcome::Hurt(n) => {
-                message = "Jebakan! HP -";
-                hp_change = n as i8;
-            }
-            Outcome::Healed(n) => {
-                message = "Ramuan! HP +";
-                hp_change = n as i8;
-            }
-
-            Outcome::Won => {
-                draw_frame(game);
-
-                println!("Berhasil");
-                break;
-            }
-            Outcome::Died => {
-                draw_frame(game);
-
-                println!("Game Over! Kamu gagal :v");
-                break;
-            }
-        }
+        feedback = Some(render::Feedback::Game(
+            game.proceed_movement(movement_row, movement_col),
+        ));
     }
-}
-
-fn draw_frame(game: &Game) {
-    render::simple_clear_screen();
-    render::draw_map(game);
-    render::display_info(game);
 }
