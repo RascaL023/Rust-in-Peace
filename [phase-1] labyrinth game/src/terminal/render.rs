@@ -64,11 +64,26 @@ pub fn print_feedback(feedback: &Feedback) {
         Feedback::Invalid => println!("Invalid input"),
         Feedback::Game(outcome) => match outcome {
             Outcome::Moved => {}
+            Outcome::DontHavePotion => {
+                println!("Tidak punya ramuan");
+            }
+            Outcome::ShowInventory(inv) => {
+                print!("Inventory: ");
+                for i in 0..inv.len() {
+                    print!("[{}] ({}) ", i + 1, inv[i]);
+                } println!();
+            }
+            Outcome::InventoryFull => {
+                println!("Inventory penuh");
+            }
             Outcome::HitWall => {
                 println!("Menabrak tembok");
             }
             Outcome::OutOfMap => {
                 println!("Keluar map");
+            }
+            Outcome::TookPotion => {
+                println!("Ramuan berhasil diambil");
             }
             Outcome::TookKey => {
                 println!("Kunci berhasil diambil");

@@ -1,4 +1,4 @@
-use crate::domain::{outcome::Outcome, player::Player, tile::Tile};
+use crate::domain::{command::Command, item::Item, outcome::Outcome, player::Player, tile::Tile};
 
 pub struct Game {
     map: [[u8; 8]; 6],
@@ -16,10 +16,10 @@ impl Game {
         Game {
             map: [
                 [1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 1, 3, 6, 1],
-                [1, 1, 1, 5, 1, 5, 1, 1],
+                [1, 0, 6, 6, 1, 3, 6, 1],
+                [1, 1, 1, 6, 1, 5, 1, 1],
                 [1, 0, 5, 0, 0, 0, 4, 2],
-                [1, 0, 1, 1, 1, 1, 1, 1],
+                [1, 6, 1, 1, 1, 1, 1, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1],
             ],
             player: Player::default(),
@@ -50,6 +50,10 @@ impl Game {
         self.player.has_key()
     }
 
+    pub fn show_inventory(&self) -> &[Option<Item>; 2] {
+        self.player.show_inventory()
+    }
+
     pub fn tile_at(&self, (r, c): (usize, usize)) -> Option<Tile> {
         if self.is_outside_map((r as i8, c as i8)) {
             return None;
@@ -58,8 +62,18 @@ impl Game {
         Tile::from_code(self.map[r][c])
     }
 
-    pub fn proceed_movement(&mut self, row: i8, col: i8) -> Outcome {
-        if self.is_outside_map((row, col)) {
+    pub fn player_consume_potion(&mut self) -> Outcome {
+        if let Some(n) = self.player.consume_potion_or_none() {
+            return Outcome::Healed(n);
+        }
+
+        Outcome::DontHavePotion
+    }
+
+    pub fn proceed_movement(&mut self, row: i8, col: i8, command: Command) -> Outcome {
+        if let Command::ConsumePotion = command {
+            return self.player_consume_potion();
+        } else if self.is_outside_map((row, col)) {
             return Outcome::OutOfMap;
         }
 
@@ -76,29 +90,33 @@ impl Game {
 
                 Outcome::Hurt(current_hp)
             }
-            Some(Tile::Potion(n)) => {
-                let current_hp = self.player_hp();
+            Some(Tile::Potion(_)) => {
+                // let current_hp = self.player_hp();
 
                 self.moved_to(r, c);
-                self.player.heal(n);
+                if !self.player.pick_up_item(Item::Potion) {
+                    return Outcome::InventoryFull;
+                }
                 self.update_map(r, c, Tile::Floor);
 
-                Outcome::Healed(self.player_hp() - current_hp)
+                // Outcome::Healed(self.player_hp() - current_hp)
+                Outcome::TookPotion
             }
             Some(Tile::Key) => {
-                self.player.pick_up_key();
                 self.moved_to(r, c);
+                if !self.player.pick_up_item(Item::Key) {
+                    return Outcome::InventoryFull;
+                }
                 self.update_map(r, c, Tile::Floor);
 
                 Outcome::TookKey
             }
             Some(Tile::Door) => {
-                if !self.has_key() {
+                if !self.player.consume_key_if_exist() {
                     return Outcome::DoorLocked;
                 }
 
-                // Jika ingin door berubah setelah terbuka
-                // self.update_map(r, c, Tile::Floor);
+                self.update_map(r, c, Tile::Floor);
                 self.moved_to(r, c);
 
                 Outcome::OpenedDoor
