@@ -46,7 +46,7 @@ impl Player {
     }
 
     pub fn pick_up_item(&mut self, item: Item) -> bool {
-        for i in 0..2 {
+        for i in 0..self.bag.len() {
             if self.bag[i].is_none() {
                 self.bag[i] = Some(item);
                 return true;
@@ -57,7 +57,7 @@ impl Player {
     }
 
     pub fn consume_key_if_exist(&mut self) -> bool {
-        for i in 0..2 {
+        for i in 0..self.bag.len() {
             if let Some(Item::Key) = self.bag[i] {
                 self.bag[i].take();
                 return true;
@@ -68,10 +68,10 @@ impl Player {
     }
 
     pub fn consume_potion_or_none(&mut self) -> Option<u8> {
-        for i in 0..2 {
-            if let Some(Item::Potion) = self.bag[i] {
+        for i in 0..self.bag.len() {
+            if let Some(Item::Potion(n)) = self.bag[i] {
                 self.bag[i].take();
-                return Some(self.heal(2));
+                return Some(self.heal(n));
             }
         }
 

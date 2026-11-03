@@ -34,7 +34,7 @@ pub fn display_info(game: &Game) {
             match inventory[i] {
                 None => "Kosong",
                 Some(Item::Key) => "Kunci",
-                Some(Item::Potion) => "Ramuan",
+                Some(Item::Potion(_)) => "Ramuan",
             }
         );
     }

@@ -84,16 +84,13 @@ impl Game {
 
                 Outcome::Hurt(current_hp)
             }
-            Some(Tile::Potion(_)) => {
-                // let current_hp = self.player_hp();
-
+            Some(Tile::Potion(n)) => {
                 self.moved_to(r, c);
-                if !self.player.pick_up_item(Item::Potion) {
+                if !self.player.pick_up_item(Item::Potion(n)) {
                     return Outcome::InventoryFull;
                 }
                 self.update_map(r, c, Tile::Floor);
 
-                // Outcome::Healed(self.player_hp() - current_hp)
                 Outcome::TookPotion
             }
             Some(Tile::Key) => {
