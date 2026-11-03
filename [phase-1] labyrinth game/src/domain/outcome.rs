@@ -13,7 +13,6 @@ pub enum Outcome {
 
     DontHavePotion,
     InventoryFull,
-    ShowInventory([String; 2]),
 
     Won,
     Died(u8),

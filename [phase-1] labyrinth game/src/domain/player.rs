@@ -1,4 +1,4 @@
-use crate::domain::item::{Item};
+use crate::domain::item::Item;
 
 pub struct Player {
     hp: u8,
@@ -31,16 +31,6 @@ impl Player {
 
     pub fn max_hp(&self) -> u8 {
         self.max_hp
-    }
-
-    pub fn has_key(&self) -> bool {
-        for i in 0..2 {
-            if let Some(Item::Key) = self.bag[i] {
-                return true;
-            }
-        }
-
-        false
     }
 
     pub fn total_step(&self) -> usize {

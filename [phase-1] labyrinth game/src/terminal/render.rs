@@ -1,4 +1,4 @@
-use labyrinth::domain::{game::Game, outcome::Outcome, tile::Tile};
+use labyrinth::domain::{game::Game, item::Item, outcome::Outcome, tile::Tile};
 
 pub enum Feedback {
     Invalid,
@@ -19,12 +19,27 @@ pub fn symbol(tile: Tile) -> char {
 
 pub fn display_info(game: &Game) {
     println!(
-        "HP: {}/{} | Langkah: {} | Kunci: {}",
+        "HP: {}/{} | Langkah: {}",
         game.player_hp(),
         game.player_max_hp(),
         game.steps(),
-        if game.has_key() { "Ya" } else { "Tidak" },
     );
+
+    let inventory = game.show_inventory();
+    print!("Inventori:");
+    for i in 0..inventory.len() {
+        print!(
+            " [{}] ({})",
+            i + 1,
+            match inventory[i] {
+                None => "Kosong",
+                Some(Item::Key) => "Kunci",
+                Some(Item::Potion) => "Ramuan",
+            }
+        );
+    }
+
+    println!();
 }
 
 pub fn draw_map(game: &Game) {
@@ -66,12 +81,6 @@ pub fn print_feedback(feedback: &Feedback) {
             Outcome::Moved => {}
             Outcome::DontHavePotion => {
                 println!("Tidak punya ramuan");
-            }
-            Outcome::ShowInventory(inv) => {
-                print!("Inventory: ");
-                for i in 0..inv.len() {
-                    print!("[{}] ({}) ", i + 1, inv[i]);
-                } println!();
             }
             Outcome::InventoryFull => {
                 println!("Inventory penuh");

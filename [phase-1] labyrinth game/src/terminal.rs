@@ -23,38 +23,23 @@ pub fn run(game: &mut Game) {
             break;
         }
 
-        println!("Perintah (i/p/k/j/h/l/q): ");
+        println!("Perintah (p/k/j/h/l/q): ");
         print!("> ");
         io::stdout().flush().expect("Gagal flush");
         io::stdin()
             .read_line(&mut input)
             .expect("Tidak  bisa memproses input");
 
-        let (movement_row, movement_col, command) = match input::parse(input.trim()) {
-            Some(Command::ShowInventory) => {
-                let inventory = game.show_inventory();
-                let displayed_inventory: [String; 2] = [
-                    match inventory[0] {
-                        None => String::from("Kosong"),
-                        Some(labyrinth::domain::item::Item::Key) => String::from("Kunci"),
-                        Some(labyrinth::domain::item::Item::Potion) => String::from("Ramuan"),
-                    },
-                    match inventory[1] {
-                        None => String::from("Kosong"),
-                        Some(labyrinth::domain::item::Item::Key) => String::from("Kunci"),
-                        Some(labyrinth::domain::item::Item::Potion) => String::from("Ramuan"),
-                    }
-                ];
-                feedback = Some(render::Feedback::Game(Outcome::ShowInventory(displayed_inventory)));
-                continue;
-            }
+        let (movement_row, movement_col) = match input::parse(input.trim()) {
             Some(Command::ConsumePotion) => {
-                (0, 0, Command::ConsumePotion)
+                let outcome = game.player_consume_potion();
+                feedback = Some(render::Feedback::Game(outcome));
+                continue;
             }
             Some(Command::Go(d)) => {
                 let (r, c) = d.vector_from();
                 let (rp, cp) = game.player_position();
-                (rp as i8 + r, cp as i8 + c, Command::Go(d))
+                (rp as i8 + r, cp as i8 + c)
             }
             Some(Command::Quit) => {
                 println!("Sampai jumpa");
@@ -67,7 +52,7 @@ pub fn run(game: &mut Game) {
         };
 
         feedback = Some(render::Feedback::Game(
-            game.proceed_movement(movement_row, movement_col, command),
+            game.proceed_movement(movement_row, movement_col),
         ));
     }
 }

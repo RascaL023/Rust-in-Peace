@@ -3,7 +3,6 @@ use labyrinth::domain::direction::Direction;
 
 pub fn parse(input: &str) -> Option<Command> {
     match input {
-        "i" => Some(Command::ShowInventory),
         "p" => Some(Command::ConsumePotion),
         "k" => Some(Command::Go(Direction::North)),
         "j" => Some(Command::Go(Direction::South)),

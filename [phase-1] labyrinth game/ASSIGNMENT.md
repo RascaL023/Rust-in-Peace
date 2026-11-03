@@ -306,7 +306,7 @@ Sama seperti Tahap 3, kecuali kotak baris 4 kolom 1 sekarang `6` (ramuan kedua):
 1. Tas punya **2 slot**. Tiap slot kosong atau berisi satu barang.
 2. Menginjak kunci/ramuan → barang masuk ke **slot kosong pertama**, kotak jadi lantai, pesan `Mengambil Kunci.` / `Mengambil Ramuan.`
 3. Jika tas penuh → `Inventori penuh.` Pemain tetap berpindah ke kotak itu dan barangnya **tetap di peta**. Menginjaknya lagi nanti bisa mengambilnya jika sudah ada slot kosong.
-4. Perintah `i` menampilkan tas: `Inventori: [1] Kunci  [2] (kosong)`. Tidak menambah langkah.
+4. [-] Perintah `i` menampilkan tas: `Inventori: [1] Kunci  [2] (kosong)`. Tidak menambah langkah.
 5. Perintah `p` meminum **ramuan pertama** di tas: HP +3 (maks 5), slot jadi kosong. Tidak menambah langkah. Jika tidak punya: `Tidak punya ramuan.`
 6. Pintu: butuh **kunci di tas**. Jika ada: kunci **dikonsumsi** (slot kosong), kotak pintu jadi lantai, pemain pindah, pesan `Pintu terbuka.` Jika tidak: `Pintu terkunci.`
 7. Jebakan, HP, kemenangan, kematian, dan `q` sama seperti Tahap 3.
@@ -334,10 +334,10 @@ Inventori: [1] (kosong)  [2] (kosong)
 
 ### ✅ Kriteria selesai
 - [ ] Rute tercepat yang selamat: **14 langkah**, HP akhir **2** (perintah `p` tidak dihitung langkah)
-- [ ] Mengambil kunci + ramuan lalu menginjak ramuan ketiga → `Inventori penuh.` dan ramuan tetap di peta
-- [ ] Setelah pintu dibuka, tas tidak lagi berisi kunci
-- [ ] `p` tanpa ramuan tidak crash
-- [ ] Tidak ada `.clone()` dan tidak ada `bool` untuk kunci
+- [x] Mengambil kunci + ramuan lalu menginjak ramuan ketiga → `Inventori penuh.` dan ramuan tetap di peta
+- [x] Setelah pintu dibuka, tas tidak lagi berisi kunci
+- [x] `p` tanpa ramuan tidak crash
+- [x] Tidak ada `.clone()` dan tidak ada `bool` untuk kunci
 - [ ] `cargo clippy` bersih
 
 ### 🧠 Uji diri

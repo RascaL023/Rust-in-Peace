@@ -1,4 +1,4 @@
-use crate::domain::{command::Command, item::Item, outcome::Outcome, player::Player, tile::Tile};
+use crate::domain::{item::Item, outcome::Outcome, player::Player, tile::Tile};
 
 pub struct Game {
     map: [[u8; 8]; 6],
@@ -46,10 +46,6 @@ impl Game {
         self.player.total_step()
     }
 
-    pub fn has_key(&self) -> bool {
-        self.player.has_key()
-    }
-
     pub fn show_inventory(&self) -> &[Option<Item>; 2] {
         self.player.show_inventory()
     }
@@ -70,10 +66,8 @@ impl Game {
         Outcome::DontHavePotion
     }
 
-    pub fn proceed_movement(&mut self, row: i8, col: i8, command: Command) -> Outcome {
-        if let Command::ConsumePotion = command {
-            return self.player_consume_potion();
-        } else if self.is_outside_map((row, col)) {
+    pub fn proceed_movement(&mut self, row: i8, col: i8) -> Outcome {
+        if self.is_outside_map((row, col)) {
             return Outcome::OutOfMap;
         }
 
