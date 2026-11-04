@@ -306,11 +306,10 @@ Sama seperti Tahap 3, kecuali kotak baris 4 kolom 1 sekarang `6` (ramuan kedua):
 1. Tas punya **2 slot**. Tiap slot kosong atau berisi satu barang.
 2. Menginjak kunci/ramuan → barang masuk ke **slot kosong pertama**, kotak jadi lantai, pesan `Mengambil Kunci.` / `Mengambil Ramuan.`
 3. Jika tas penuh → `Inventori penuh.` Pemain tetap berpindah ke kotak itu dan barangnya **tetap di peta**. Menginjaknya lagi nanti bisa mengambilnya jika sudah ada slot kosong.
-4. [-] Perintah `i` menampilkan tas: `Inventori: [1] Kunci  [2] (kosong)`. Tidak menambah langkah.
-5. Perintah `p` meminum **ramuan pertama** di tas: HP +3 (maks 5), slot jadi kosong. Tidak menambah langkah. Jika tidak punya: `Tidak punya ramuan.`
-6. Pintu: butuh **kunci di tas**. Jika ada: kunci **dikonsumsi** (slot kosong), kotak pintu jadi lantai, pemain pindah, pesan `Pintu terbuka.` Jika tidak: `Pintu terkunci.`
-7. Jebakan, HP, kemenangan, kematian, dan `q` sama seperti Tahap 3.
-8. Status menampilkan tas tiap putaran di baris tersendiri.
+4. Perintah `p` meminum **ramuan pertama** di tas: HP +3 (maks 5), slot jadi kosong. Tidak menambah langkah. Jika tidak punya: `Tidak punya ramuan.`
+5. Pintu: butuh **kunci di tas**. Jika ada: kunci **dikonsumsi** (slot kosong), kotak pintu jadi lantai, pemain pindah, pesan `Pintu terbuka.` Jika tidak: `Pintu terkunci.`
+6. Jebakan, HP, kemenangan, kematian, dan `q` sama seperti Tahap 3.
+7. Status menampilkan tas tiap putaran di baris tersendiri.
 
 ### Aturan kode tahap ini
 - `enum Item { Key, Potion }`. Tas bertipe `[Option<Item>; 2]`.
@@ -333,16 +332,24 @@ Inventori: [1] (kosong)  [2] (kosong)
 ```
 
 ### ✅ Kriteria selesai
-- [ ] Rute tercepat yang selamat: **14 langkah**, HP akhir **2** (perintah `p` tidak dihitung langkah)
+- [x] Rute tercepat yang selamat: **14 langkah**, HP akhir **2** (perintah `p` tidak dihitung langkah)
 - [x] Mengambil kunci + ramuan lalu menginjak ramuan ketiga → `Inventori penuh.` dan ramuan tetap di peta
 - [x] Setelah pintu dibuka, tas tidak lagi berisi kunci
 - [x] `p` tanpa ramuan tidak crash
 - [x] Tidak ada `.clone()` dan tidak ada `bool` untuk kunci
-- [ ] `cargo clippy` bersih
+- [?] `cargo clippy` bersih
+Note: `cargo clippy` 1 warning pada iterasi cetak inventory(masih gak boleh pakai .iter dulu :v)
 
 ### 🧠 Uji diri
 - Apa yang dilakukan `.take()` pada slot, dan kenapa `let item = tas[0];` tidak bisa dipakai di sini?
+    > Mengambil item tersebut dan menggantinya menjadi None.
+    Karena jika `let item = tas[0]`, kepemilikan dari tas[0] akan berpindah ke item.
+    Isi dari tas bukanlah Copy value, dan array menuntut nilai yang selalu valid.
 - Dimana tepatnya kepemilikan sebuah `Item::Potion` berpindah selama hidupnya?
+    > Saat kita masukkan `Item::Potion` ke dalam tas/inventory.
+    `Item::Potion` dibuat ketika pemain menginjak tile potion,
+    kemudian Item berpindah melalui parameter dan dimasukkan ke tas.
+    Saat pemain memakai Item tersebut, terjadi `take()`, dimana Item dari tas diambil.
 
 ---
 
